@@ -12,12 +12,14 @@
     <div id="app">
         <h1>Cadastro de Agenda</h1>
 
-        <form @submit.prevent="editIndex === -1 ? addContact() : apdateContact()"> <!-- Condição para adicionar ou atualizar -->
+        <form @submit.prevent="editIndex === -1 ? addContact() : updateContact()"> <!-- Condição para adicionar ou atualizar -->
             <input type="text" v-model="currentContact.name" placeholder="Nome" required> <!-- Ligado a currentContact-->
             <input type="text" v-model="currentContact.phone" placeholder="Telefone" required> <!-- Ligado a currentContact-->
             <input type="email" v-model="currentContact.email" placeholder="Email" required> <!-- Ligado a currentContact-->    
             <button type="submit">{{ editIndex === -1 ? 'Adicionar' : 'Atualizar' }}</button> <!-- texto dinãmico-->
         </form> 
+
+        <div v-if="messageVisible" class="message">{{ messageText }}</div> <!-- Mensagem de configuração-->
 
         <table>
             <thead>
@@ -47,12 +49,15 @@
                     email: ''        
                 },
                 contacts: [], // Array que armazenará todos os contatos
-                editIndex: -1 // Índice para saber se estamos editando um contato
+                editIndex: -1, // Índice para saber se estamos editando um contato
+                messageVisible: false, // Controla a visibilidade da mensagem
+                messageText: '' // Texto da mensagem
             },
             methods: {
                 addContact() { // Método para adicionar um novo contato
                     if (this.currentContact.name && this.currentContact.phone && this.currentContact.email) { // Verifica se todos os campos estão preenchidos
                         this.contacts.push({...this.currentContact });// Adiciona o novo contato ao array
+                        this.showMessage('Contato adicionado com sucesso'); // Exibe a mensagem
                         this.resetForm(); // Limpa os campos após adicionar
                     }
                 },
@@ -62,6 +67,7 @@
                 },
                 updateContact() { // Método para atualizar o contato
                 this.$set(this.contacts, this.editIndex, this.currentContact); // Atualiza o contato no array
+                this.showMessage('Contato atualizado com sucesso!'); // Exibe a mensagem
                 this.resetForm(); // Limpa os campos após a atualização    
                 this.editIndex = -1; // Reseta o indice de edição
                 },
@@ -70,6 +76,13 @@
                  },
                 resetForm() { // Método para limpar os campos
                 this.currentContact = { name: '', phone: '', email: ''}; // Reseta o objeto de contato
+            },
+            showMessage(text) {
+                this.messageText = text;
+                this.messageVisible = true;
+                setTimeout(() => {
+                    this.messageVisible = false;
+                }, 4000);
             }
             }
         });
@@ -100,6 +113,42 @@
         .delete{
             background-color: red;
             color: white;
+        }
+
+        input {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e7e7e7;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .message {
+            background-color: #dff0d8; /* verde claro */
+            color: #3c763d; /* Verde escuro */
+            padding: 10px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #d6e9c6; /* Borda verde */
+            border-radius: 5px;
         }
     </style>
 
